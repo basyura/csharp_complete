@@ -78,7 +78,7 @@ function! s:source.get_complete_words(cur_keyword_pos, cur_keyword_str)
   for v in s:keywords
     let mc = matchstr(v , a:cur_keyword_str . '\a\+')
     if mc != ""
-      call add(list, {'word' : mc , 'menu' : '[cs]'})
+      call add(list, {'word' : mc , 'menu' : '[neco-cs]'})
     endif
   endfor
   return list
