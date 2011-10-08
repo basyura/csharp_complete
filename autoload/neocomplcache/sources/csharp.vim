@@ -1,7 +1,7 @@
 
 let s:source = {
-      \ 'name': 'csharp',
-      \ 'kind' : 'ftplugin',
+      \ 'name'     : 'csharp'   ,
+      \ 'kind'     : 'ftplugin' ,
       \ 'filetypes': {'cs' : 1 },
       \ }
 
@@ -11,6 +11,7 @@ let s:keywords = [
       \'System.AddIn',
       \'System.CodeDom',
       \'System.Collections',
+      \'System.Collections.Generic',
       \'System.ComponentModel',
       \'System.Configuration',
       \'System.Data',
@@ -62,13 +63,7 @@ let s:keywords = [
       \'XamlGeneratedNamespace',
       \]
 
-let s:candidates = []
-
 function! s:source.initialize()
-  echoerr "initialize"
-  for v in s:keywords
-    call add(s:candidates, {'word' : v , 'menu' : '[cs]'})
-  endfor
 endfunction
 
 function! s:source.finalize()
@@ -79,7 +74,14 @@ function! s:source.get_keyword_pos(cur_text)
 endfunction
 
 function! s:source.get_complete_words(cur_keyword_pos, cur_keyword_str)
-  return neocomplcache#keyword_filter(copy(s:candidates) , a:cur_keyword_str)
+  let list = []
+  for v in s:keywords
+    let mc = matchstr(v , a:cur_keyword_str . '\a\+')
+    if mc != ""
+      call add(list, {'word' : mc , 'menu' : '[cs]'})
+    endif
+  endfor
+  return list
 endfunction
 
 function! neocomplcache#sources#csharp#define()
