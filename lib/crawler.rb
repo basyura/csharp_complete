@@ -1,18 +1,21 @@
+#!ruby
+#-*- coding: utf-8 -*-
+#
+# 辞書を作るためのクローラ
+# 結構適当・・・
+#
 require 'mechanize'
 
-
-
-base_url = 'http://msdn.microsoft.com/en-us/library'
+BASE_URL = 'http://msdn.microsoft.com/en-us/library'
 
 @cached_url = []
-@spaces = []
+@spaces     = []
 
 def crawl(search_url, depth = 0)
   if depth > 1
     return
   end
   puts search_url
-  return if @cached_url.include?(search_url)
   agent = Mechanize.new
   begin
     page = agent.get(search_url)
@@ -20,19 +23,20 @@ def crawl(search_url, depth = 0)
     puts e
     return
   end
-  page.search('table[@id="memberList"]//a').each do |link|
+  page.search('table[@id="memberList"]/tr/td/a').each do |link|
     url = link[:href]
-    next if @cached_url.include?(url)
-    crawl(url , depth + 1)
+    next if @cached_url.include?(url) || url !~ /^#{BASE_URL}/
     @spaces << link.text
     @cached_url << url
+    puts link.text + "\t" + url
+    crawl(url , depth + 1)
   end
 end
 
 crawl('http://msdn.microsoft.com/en-us/library/gg145045.aspx')
 
-open("list.txt","w") do |file|
-  @spaces.each do |line|
+open("name_spaces.txt","w") do |file|
+  @spaces.uniq.sort.each do |line|
     file.puts line
   end
 end
