@@ -12,21 +12,14 @@ BASE_URL = 'http://msdn.microsoft.com/en-us/library'
 @spaces     = []
 
 def crawl(search_url, depth = 0)
-  if depth > 1
-    return
-  end
+  return if depth > 1
   puts search_url
-  agent = Mechanize.new
-  begin
-    page = agent.get(search_url)
-  rescue => e
-    puts e
-    return
-  end
+  page = Mechanize.new.get(search_url)
   page.search('table[@id="memberList"]/tr/td/a').each do |link|
     url = link[:href]
-    next if @cached_url.include?(url) || url !~ /^#{BASE_URL}/
-    @spaces << link.text
+    next if @cached_url.include?(url)
+    next if url !~ /^#{BASE_URL}/
+    @spaces     << link.text
     @cached_url << url
     puts link.text + "\t" + url
     crawl(url , depth + 1)
