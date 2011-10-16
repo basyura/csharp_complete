@@ -47,7 +47,9 @@ function! s:get_using_complete_words(cur_keyword_pos, cur_keyword_str)
     let space .= v
   endfor
   if space != '' | let space .= '.' | endif
-  return map(keys(current), '{"word" : space . v:val}')
+  let candidates = map(keys(current), '{"word" : space . v:val}')
+
+  return neocomplcache#keyword_filter(candidates, a:cur_keyword_str)
 endfunction
 "
 function! s:source.finalize()
