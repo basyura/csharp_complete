@@ -33,6 +33,21 @@ function! s:source.initialize()
   let s:space_tree = space_tree
 endfunction
 "
+function! s:source.finalize()
+endfunction
+"
+function! s:source.get_keyword_pos(cur_text)
+  return matchend(a:cur_text, '^using\s\+')
+endfunction
+"
+function! s:source.get_complete_words(cur_keyword_pos, cur_keyword_str)
+  if getline(".") =~ '^using'
+    return s:get_using_complete_words(a:cur_keyword_pos, a:cur_keyword_str)
+  endif
+
+  return []
+endfunction
+"
 " get name spaces
 "
 function! s:get_using_complete_words(cur_keyword_pos, cur_keyword_str)
@@ -50,21 +65,6 @@ function! s:get_using_complete_words(cur_keyword_pos, cur_keyword_str)
   let candidates = map(keys(current), '{"word" : space . v:val}')
 
   return neocomplcache#keyword_filter(candidates, a:cur_keyword_str)
-endfunction
-"
-function! s:source.finalize()
-endfunction
-"
-function! s:source.get_keyword_pos(cur_text)
-  return matchend(a:cur_text, '^using\s\+')
-endfunction
-"
-function! s:source.get_complete_words(cur_keyword_pos, cur_keyword_str)
-  if getline(".") =~ '^using'
-    return s:get_using_complete_words(a:cur_keyword_pos, a:cur_keyword_str)
-  endif
-
-  return []
 endfunction
 "
 function! neocomplcache#sources#csharp_complete#define()
